@@ -1,6 +1,7 @@
 import { Button, Input, Select, Typography } from 'antd';
 import { Form } from 'formik';
 import React, { useState } from 'react'
+import FileUpload from '../../utils/FileUpload';
 
 const Continents = [
     { key: 1, value: "Africa" },
@@ -21,19 +22,28 @@ const UploadProductPage = () => {
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState(0);
     const [continent, setContinent] = useState(1);
+    const [images, setImages] = useState([]);
 
     const onTitleChange = (e) => {
         setTitle(e.currentTarget.value);
     }
+
     const onDescriptionChange = (e) => {
         setDescription(e.currentTarget.value);
     }
+
     const onPriceChange = (e) => {
         setPrice(e.currentTarget.value);
     }
+
     const onContinentChange = (e) => {
-        console.log(e.currentTarget.value);
-        setContinent(e.currentTarget.value);
+        // console.log(e);
+        setContinent(e);
+    }
+
+    const updateImages = (newImages) => {
+        console.log(newImages);
+        //    setImages(newImages)
     }
 
     return (
@@ -45,6 +55,7 @@ const UploadProductPage = () => {
             <Form onSubmit={"k"}>
 
                 {/* DROPZONE */}
+                <FileUpload refreshFunction={updateImages} />
 
                 <br />
                 <br />
@@ -74,7 +85,9 @@ const UploadProductPage = () => {
 
                 <div className="form-group">
                     <label htmlFor="continents">Continent</label>
-                    <Select name="continents" id="" onChange={onContinentChange}>
+                    <Select name="continents" id=""
+                        placeholder="Select Continent"
+                        onChange={onContinentChange}>
                         {
                             Continents.map(continent => (
                                 <Select.Option key={continent.key} value={continent.key}>{continent.value}</Select.Option>
@@ -84,7 +97,6 @@ const UploadProductPage = () => {
                 </div>
                 <br />
                 <Button>Submit</Button>
-                {/* <button>Submit</button> */}
             </Form>
         </div>
     )
