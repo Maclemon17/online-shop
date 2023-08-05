@@ -5,7 +5,7 @@ import Dropzone from 'react-dropzone'
 
 const FileUpload = (props) => {
     const [images, setImages] = useState([]);
-    
+
     const onDrop = async (files) => {
         let formData = new FormData();
 
@@ -27,6 +27,16 @@ const FileUpload = (props) => {
             console.log(error);
         }
 
+    }
+
+    const onDelete = (image) => {
+        const currentIndex =    images.indexOf(image);
+        
+        let newImages = [...images];
+        newImages.splice(currentIndex, 1);
+
+        setImages(newImages)
+        props.refreshFunction(newImages);
     }
 
     return (
@@ -56,10 +66,18 @@ const FileUpload = (props) => {
 
             <div style={{ display: 'flex', width: '350px', height: '240px', overflowX: 'scroll' }}>
 
-                <div>
-                    <img />
+                {
+                    images.map((image, index) => (
+                        <div key={index} onClick={() => onDelete(image)}>
+                            <img
+                                style={{ minWidth: '300px', width: '300px', height: '240px' }}
+                                src={`http://localhost:5000/${image}`}
+                                alt={`product-image${index}`}
+                            />
+                        </div>
+                    ))
+                }
 
-                </div>
 
             </div>
         </div>
