@@ -10,8 +10,7 @@ const FileUpload = (props) => {
         let formData = new FormData();
 
         formData.append("file", files[0])
-
-        console.log(formData);
+        
         // Save to the server 
         try {
             const response = await Axios.post("/api/product/uploadImage", formData, {
@@ -22,7 +21,7 @@ const FileUpload = (props) => {
                 setImages([...images, response.data.image]);
                 props.refreshFunction([...images, response.data.image]);
             }
-            console.log(response);
+           
         } catch (error) {
             console.log(error);
         }
@@ -72,7 +71,7 @@ const FileUpload = (props) => {
                             <img
                                 style={{ minWidth: '300px', width: '300px', height: '240px' }}
                                 src={`http://localhost:5000/${image}`}
-                                alt={`product-image${index}`}
+                                alt={`product-img${index}`}
                             />
                         </div>
                     ))
