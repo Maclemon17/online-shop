@@ -48,7 +48,7 @@ const UploadProductPage = (props) => {
     const uploadProduct = async (e) => {
         e.preventDefault();
 
-        if (!title || !description || !price || !images || !continent) {
+        if (!title || !description || !price || images.length < 1 || !continent) {
             return alert("Fields cannot be blank")
         }
 

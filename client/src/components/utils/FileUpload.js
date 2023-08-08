@@ -10,7 +10,6 @@ const FileUpload = (props) => {
         let formData = new FormData();
 
         formData.append("file", files[0])
-        
         // Save to the server 
         try {
             const response = await Axios.post("/api/product/uploadImage", formData, {

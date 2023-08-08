@@ -2,6 +2,7 @@ import { Carousel } from 'antd'
 import React from 'react'
 
 const ImageSlider = ({ images }) => {
+    // console.log(images);
     return (
         <div>
             <Carousel autoplay>

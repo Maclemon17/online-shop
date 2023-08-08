@@ -6,24 +6,48 @@ import ImageSlider from '../../utils/ImageSlider';
 
 function LandingPage() {
     const [Products, setProducts] = useState([]);
+    const [skip, setSkip] = useState(0);
+    const [limit, setLimit] = useState(8);
+    const [postSize, setPostSize] = useState(0)
 
     useEffect(() => {
-        async function fetchProducts() {
-            try {
-                const response = await Axios.get("/api/product/getProducts");
-
-                if (response.data.success) {
-                    setProducts(response.data.products);
-                } else {
-                    alert("Failed to fetch products");
-                }
-            } catch (error) {
-                console.log(error);
-            }
+        const queries = {
+            skip: skip,
+            limit: limit,
         }
 
-        fetchProducts();
-    }, [])
+        fetchProducts(queries);
+    }, []);
+
+    const fetchProducts = async (queries) => {
+        try {
+            const response = await Axios.post("/api/product/getProducts", queries);
+            const { products, success, size } = response.data;
+
+            if (success) {
+                setProducts(products);
+                setPostSize(size)
+                // console.log(object);
+            } else {
+                alert("Failed to fetch products");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const loadMore = () => {
+        let Skip = skip + limit;
+
+        const queries = {
+            skip: Skip,
+            limit: limit
+        }
+
+        fetchProducts(queries);
+        setSkip(Skip);
+    }
+
 
     const renderCards = Products.map((product, index) => (
         <Col lg={6} md={8} xs={24} key={index}>
@@ -63,9 +87,8 @@ function LandingPage() {
             }
 
             <br />
-
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Button>Load more...</Button>
+                {postSize >= 8 && <Button onClick={loadMore}>Load more...</Button>}
             </div>
         </div>
     )

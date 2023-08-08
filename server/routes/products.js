@@ -63,14 +63,27 @@ router.post("/uploadProduct", auth, async (req, res) => {
 });
 
 
-router.get("/getProducts", auth, async (req, res) => {
-    try {
-        const products = await Product.find().exec();
+router.post("/getProducts", auth, async (req, res) => {
+    const { skip, limit, order, sortBy } = req.body;
 
-        return res.status(200).json({success: true, products})
+    try {
+
+        let ORDER = order ? order : "desc",
+            SORT_BY = sortBy ? sortBy : "_id",
+            SKIP = parseInt(skip),
+            LIMIT = limit ? parseInt(limit) : 100;
+
+        const products = await Product.find()
+            .populate("writer")
+            .sort([[SORT_BY, ORDER]])
+            .skip(SKIP)
+            .limit(LIMIT)
+            .exec();
+
+        return res.status(200).json({ success: true, products, size: products.length })
     } catch (error) {
         console.log(error);
-        return res.status(400).json({success: false, error})
+        return res.status(400).json({ success: false, error })
     }
 })
 
