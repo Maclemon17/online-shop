@@ -3,6 +3,7 @@ import Meta from 'antd/lib/card/Meta';
 import Axios from 'axios';
 import React, { useState, useEffect } from 'react'
 import ImageSlider from '../../utils/ImageSlider';
+import CheckBox from './Sections/CheckBox';
 
 function LandingPage() {
     const [Products, setProducts] = useState([]);
@@ -67,10 +68,10 @@ function LandingPage() {
                 <h2>Let's Travel Anywhere <Icon type="rocket" /></h2>
             </div>
 
-            {/* Search */}
-
             {/* Filter */}
-
+            <CheckBox />
+            
+            {/* Search */}
 
             {Products.length === 0 ?
                 <div style={{
