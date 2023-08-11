@@ -21,21 +21,23 @@ const Continents = [
 ];
 
 
-const CheckBox = () => {
+const CheckBox = ({ handleFilters }) => {
     const [checked, setChecked] = useState([]);
 
 
     const toggleContinent = (id) => {
+        setChecked(id)
         const currentIndex = checked.indexOf(id);
         const newChecked = [...checked];
-
+       
         if (currentIndex === -1) {
-            newChecked.push(newChecked);
+            newChecked.push(id);
         } else {
             newChecked.splice(currentIndex, 1);
         }
 
-        setChecked(newChecked)
+        setChecked(newChecked);
+        handleFilters(newChecked);
     }
 
     const renderCheckBox = Continents.map((continent, index) => (
@@ -43,9 +45,9 @@ const CheckBox = () => {
             <Checkbox
                 onChange={() => toggleContinent(continent._id)}
                 type="checkbox"
-                checked
+                checked={checked.indexOf(continent._id) === -1 ? false : true}
             />
-            <span>{continent.name}</span>
+            <span> {continent.name} </span>
         </React.Fragment>
     ));
 

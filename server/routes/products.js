@@ -64,7 +64,8 @@ router.post("/uploadProduct", auth, async (req, res) => {
 
 
 router.post("/getProducts", auth, async (req, res) => {
-    const { skip, limit, order, sortBy } = req.body;
+    const { skip, limit, order, sortBy, filters } = req.body;
+
 
     try {
 
@@ -73,7 +74,21 @@ router.post("/getProducts", auth, async (req, res) => {
             SKIP = parseInt(skip),
             LIMIT = limit ? parseInt(limit) : 100;
 
-        const products = await Product.find()
+        let findArgs = {};
+
+        for (const key in filters) {
+            if (Object.hasOwnProperty.call(filters, key)) {
+                if (key === 'price') {
+                    // console.log("price");
+                } else {
+                    findArgs[key] = filters[key];
+                    // console.log(findArgs);
+                }
+
+            }
+        }
+
+        const products = await Product.find(findArgs)
             .populate("writer")
             .sort([[SORT_BY, ORDER]])
             .skip(SKIP)

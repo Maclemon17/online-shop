@@ -9,7 +9,11 @@ function LandingPage() {
     const [Products, setProducts] = useState([]);
     const [skip, setSkip] = useState(0);
     const [limit, setLimit] = useState(8);
-    const [postSize, setPostSize] = useState(0)
+    const [postSize, setPostSize] = useState(0);
+    const [Filters, setFilters] = useState({
+        continent: [],
+        price: []
+    })
 
     useEffect(() => {
         const queries = {
@@ -26,9 +30,8 @@ function LandingPage() {
             const { products, success, size } = response.data;
 
             if (success) {
-                setProducts(products);
+                setProducts(products); // spread Productsa
                 setPostSize(size)
-                // console.log(object);
             } else {
                 alert("Failed to fetch products");
             }
@@ -47,6 +50,30 @@ function LandingPage() {
 
         fetchProducts(queries);
         setSkip(Skip);
+    }
+
+    const showFilteredPoducts = (filters) => {
+        const queries = {
+            skip: 0,
+            limit: limit,
+            filters: filters
+        }
+
+        fetchProducts(queries);
+        setSkip(0);
+    }
+
+    const filterContinents = (filters, category) => {
+        const newFilters = { ...Filters };
+
+        newFilters[category] = filters;
+
+        if (category === 'price') {
+
+        }
+
+        showFilteredPoducts(newFilters)
+        setFilters(newFilters)
     }
 
 
@@ -69,18 +96,20 @@ function LandingPage() {
             </div>
 
             {/* Filter */}
-            <CheckBox />
-            
+            <CheckBox
+                handleFilters={(filters) => filterContinents(filters, "continent")}
+            />
+
             {/* Search */}
 
             {Products.length === 0 ?
                 <div style={{
                     display: 'flex', height: '300px',
-                    alignItems: 'center', justifyContent: 'center'
+                    alignItems: 'center', justifyContent: 'center',
                 }}>
                     <h2>No products yet...</h2>
                 </div> :
-                <div>
+                <div style={{ marginTop: '3rem' }}>
                     <Row gutter={[16, 16]}>
                         {renderCards}
                     </Row>
