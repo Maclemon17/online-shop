@@ -6,6 +6,8 @@ import { getCartItems, removeCartItem } from '../../../_actions/user_actions';
 
 const CartPage = (props) => {
     const [total, setTotal] = useState(0);
+    const [showTotal, setShowTotal] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const { userData, cartDetail } = props.user;
 
@@ -31,24 +33,16 @@ const CartPage = (props) => {
         fetchCart();
     }, [userData]);
 
-    // useEffect(() => {
-    //     console.log(cartDetails);
-    //     if(cartDetail && cartDetail.lemgth > 0) {
-    //         console.log("object");
-    //         calculateTotal(cartDetails);
-    //     }
-    // }, [cartDetails])
-    
-   
+
     const calculateTotal = async (cartDetail) => {
-        console.log(cartDetail);
         let total = 0;
 
         await cartDetail && cartDetail.map((item) => {
-            // console.log(item);
             total += parseInt(item.price) * item.quantity;
         });
+        
         setTotal(total);
+        total > 0 ? setShowTotal(true) : setShowTotal(false);
     };
 
     calculateTotal(cartDetails)
@@ -69,22 +63,28 @@ const CartPage = (props) => {
                     removeItem={removeFromCart}
                 />
 
-                <div style={{ marginTop: '3rem' }}>
-                    <h2>Total Amount: $ {total}</h2>
-                </div>
+                {
+                    showTotal ?
+                        <div style={{ marginTop: '3rem' }}>
+                            <h2>Total Amount: $ {total}</h2>
+                        </div> :
 
-                {/* <Result
-                    status="success"
-                    title="Successfully Purchased Items"
-                />
+                    showSuccess ?
 
-                <div style={{
-                    width: '100%', display: 'flex',
-                    flexDirection: 'column', justifyContent: "center"
-                }}>
-                    <Empty description={false} />
-                    <p>No Item(s) in Cart</p>
-                </div> */}
+                        <Result
+                            status="success"
+                            title="Successfully Purchased Items"
+                        /> :
+
+                        <div style={{
+                            width: '100%', display: 'flex',
+                            flexDirection: 'column', justifyContent: "center"
+                        }}>
+                            <Empty description={false} />
+                            <p>No Item(s) in Cart</p>
+                        </div>
+
+                }
 
             </div>
         </div>

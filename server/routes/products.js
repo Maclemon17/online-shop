@@ -4,6 +4,7 @@ const multer = require("multer");
 
 const { auth } = require("../middleware/auth");
 const { Product } = require('../models/Product');
+const { User } = require('../models/User');
 
 var storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -63,10 +64,9 @@ router.post("/uploadProduct", auth, async (req, res) => {
 });
 
 
-router.post("/getProducts", auth, async (req, res) => {
-    const { skip, limit, order, sortBy, filters } = req.body;
-
-
+router.post("/getProducts", async (req, res) => {
+    const { skip, limit, order, sortBy, filters, searchQuery } = req.body;
+    // console.log("REQUEST>>>> ", req.body);
     try {
 
         let ORDER = order ? order : "desc",
@@ -74,33 +74,87 @@ router.post("/getProducts", auth, async (req, res) => {
             SKIP = parseInt(skip),
             LIMIT = limit ? parseInt(limit) : 100;
 
-        let findArgs = {};
+        // let findArgs = {};
 
-        for (const key in filters) {
-            if (Object.hasOwnProperty.call(filters, key)) {
-                if (key === 'price') {
-                    // console.log("price");
-                } else {
-                    findArgs[key] = filters[key];
-                    // console.log(findArgs);
-                }
+        /*  for (const key in filters) {
+             // console.log("FILTERS", filters);
+ 
+             if (Object.hasOwnProperty.call(filters, key)) {
+                 if (key === 'price' && filters[key].length != 0) {
+                     // console.log("! EMPTY PRICE>>>");
+ 
+                     // findArgs[key] = {
+                     //     $gte: filters[key][0],  //   GREATER THAN OR EQUAL
+                     //     $lte: filters[key][1]   //  LESS THAN OR EQUAL
+                     // }
+                     // console.log("KEY PRICE", filters[key]);
+                 } else {
+                     findArgs[key] = filters['continent']
+                     console.log(">>> key",filters[key]);
+                 }
+             }
+             // console.log(">>>>", findArgs);
+ 
+         }
+ 
+         console.log("ARGS:", findArgs); */
 
-            }
-        }
+        // CHECK IF SEARCH QUERY IS SENT
+        // if (searchQuery) {
 
-        const products = await Product.find(findArgs)
-            .populate("writer")
+        //     const products = await Product.find(findArgs)
+        //         .find({ $text: { $search: searchQuery } })
+        //         .populate({ path:'writer', select: "-password"})
+        //         .sort([[SORT_BY, ORDER]])
+        //         .skip(SKIP)
+        //         .limit(LIMIT)
+        //         .exec();
+
+        //     return res.status(200).json({ success: true, products, size: products.length })
+        // } else {
+        const products = await Product.find()
+            .populate({ path: 'writer', select: "-password" })
             .sort([[SORT_BY, ORDER]])
             .skip(SKIP)
             .limit(LIMIT)
             .exec();
 
+        // console.log(products);
         return res.status(200).json({ success: true, products, size: products.length })
+        // }
     } catch (error) {
         console.log(error);
         return res.status(400).json({ success: false, error })
     }
-})
+});
+
+
+router.post("/products_details", async (req, res) => {
+    let { productId, type } = req.query;
+   
+    try {
+
+        if (type === 'array') {
+            let ids = productId.split(',');
+
+            productId = [];
+            productId = ids.map(id => {
+                return id;
+            });
+        }
+
+        // for type = single fetch with just an id
+        const product = await Product.find({ '_id': { $in: productId } })
+            .populate({ path: 'writer', select: "-password" }).exec();
+        // console.log(product);
+
+        return res.status(200).json({ success:true, product});
+    } catch (error) {
+        console.log(error);
+    }
+
+
+});
 
 
 
